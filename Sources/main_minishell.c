@@ -13,41 +13,31 @@
 
 #include "minishell.h"
 
-void	ft_free_tab(char ***tab)
+void	ft_print_env(char **envp)
 {
 	int y;
 
 	y = -1;
-	while ((*tab)[++y])
-		free((*tab)[y]);
-	free(*tab);
-}
-
-char	*ft_find_line_env(char **envp, char *path)
-{
-	int y;
-
-	y = -1;
+	ft_sort_tab_ascii(&envp);
 	while (envp[++y])
 	{
-		if (ft_strncmp(envp[y], path, (ft_strlen(path) - 1)) == 0)
-			return (ft_strchr(envp[y], '=') + 1);
+		if (ft_strchr(envp[y], '=')[1] != 0)
+			ft_putendl(envp[y]);
 	}
-	return (NULL);
 }
 
-int		ft_exe_special_cmd(char **cmd, char **envp)
+int		ft_exe_special_cmd(char **cmd, char ***envp)
 {
 	if (ft_strcmp("cd", cmd[0]) == 0)
-		ft_cd_minishell(cmd, envp);
+		ft_cd_minishell(cmd, *envp);
 	else if (ft_strcmp("env", cmd[0]) == 0)
-		ft_puttab(envp);
+		ft_print_env(*envp);
 	else if (ft_strcmp("echo", cmd[0]) == 0)
-		return (1);
+		ft_echo_minishell(cmd, *envp);
 	else if (ft_strcmp("setenv", cmd[0]) == 0)
-		return (1);
+		(*envp) = ft_setenv(*envp, cmd);
 	else if (ft_strcmp("unsetenv", cmd[0]) == 0)
-		return (1);
+		ft_unsetenv(*envp, cmd);
 	else 
 		return (0);
 	return (1);
@@ -63,15 +53,13 @@ char	**ft_find_path(char **environ)
 	while (ft_strncmp("PATH=", environ[a], 5) != 0)
 		a++;
 	ret = ft_strsplit(environ[a], ':');
-	tmp = ft_strdup(ret[0]);
-	ft_strdel(&ret[0]);
-	ret[0] = ft_strsub(tmp, 5, (ft_strlen(tmp) - 5));
 	a = -1;
 	while (ret[++a])
 	{
 		tmp = ft_strjoin(ret[a], "/");
 		ft_strdel(&ret[a]);
 		ret[a] = ft_strdup(tmp);
+		ft_strdel(&tmp);
 	}
 	return (ret);
 }
@@ -120,28 +108,34 @@ void	ft_exec_cmd(char **cmd, char **envp, char *path_exe)
 		ft_putstr_fd("minishell: command not found: ", 2);
 		ft_putendl_fd(cmd[0], 2);
 	}
+	ft_strdel(&path_exe);
 }
 
 int		main(int argc, const char **argv, char **envp)
 {
+	char	**environ;
 	t_stat	statbuf;
 	char	**cmd;
 	char	*line;
 
-	ft_printf("$> ");
-	get_next_line(0, &line);
-	while(ft_strncmp("exit\0", line, 5) != 0)	
+	environ = ft_cpy_envp(envp);
+	while (1)	
 	{
-		cmd = ft_strsplit(line, 32);
+		ft_printf("$> ");
+		get_next_line(0, &line);
+		if (ft_strncmp("exit\0", line, 5) == 0)
+			break ;
+		cmd = ft_split_cmd(line, 32);
 		if (cmd[0] && stat(cmd[0], &statbuf) != -1 && 
 			S_ISREG(statbuf.st_mode) && (S_IXUGO & statbuf.st_mode))
-			ft_exec_cmd(cmd, envp, cmd[0]);
-		else if (cmd[0] && ft_exe_special_cmd(cmd, envp) == 0)
-			ft_exec_cmd(cmd, envp, NULL);
-		ft_printf("$> ");
+			ft_exec_cmd(cmd, environ, cmd[0]);
+		else if (cmd[0] && ft_exe_special_cmd(cmd, &environ) == 0)
+			ft_exec_cmd(cmd, environ, NULL);
+		ft_free_tab(&cmd);
 		ft_strdel(&line);
-		get_next_line(0, &line);
 	}
-	return 0;
+	ft_strdel(&line);
+	ft_free_tab(&environ);
+	ft_putendl("exit");
+	return (0);
 }
-

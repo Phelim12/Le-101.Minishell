@@ -32,21 +32,28 @@ int		ft_cd_error(char **cmd)
 void	ft_cd_env(char **envp, char *path)
 {
 	char buf[1024];
+	char *tmp;
 	int y;
 
 	y = -1;
 	getcwd(buf, 1024);
 	while (envp[++y])
-	{
 		if (ft_strncmp(envp[y], "OLDPWD=", 7) == 0)
-			envp[y] = ft_strjoin("OLDPWD=", ft_find_line_env(envp, "PWD=/"));
-	}
+		{
+			tmp = ft_strjoin("OLDPWD=", ft_find_line_env(envp, "PWD=/"));
+			ft_strdel(&envp[y]);
+			envp[y] = ft_strdup(tmp);
+			ft_strdel(&tmp);
+		}
 	y = -1;
 	while (envp[++y])
-	{
 		if (ft_strncmp(envp[y], "PWD=", 4) == 0)
-			envp[y] = ft_strjoin("PWD=", (char *)buf);
-	}
+		{
+			tmp = ft_strjoin("PWD=", (char *)buf);
+			ft_strdel(&envp[y]);
+			envp[y] = ft_strdup(tmp);
+			ft_strdel(&tmp);
+		}
 }
 
 void	ft_modif_cd(char **cmd, char **envp)
@@ -70,6 +77,7 @@ void	ft_modif_cd(char **cmd, char **envp)
 	}
 	free(cmd[1]);
 	cmd[1] = ft_strdup(str);
+	free(str);
 }
 
 void	ft_cd_minishell(char **cmd, char **envp)
@@ -85,8 +93,10 @@ void	ft_cd_minishell(char **cmd, char **envp)
 	{
 		if (ft_strcmp("-", cmd[1]) == 0)
 		{
+			free(cmd[1]);
 			cmd[1] = ft_strdup(ft_find_line_env(envp, "OLDPWD=/"));
-			ft_putendl(cmd[1]);
+			if (cmd[1])
+				ft_putendl(cmd[1]);
 		}
 		if (chdir(cmd[1]) == -1)
 		{

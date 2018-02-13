@@ -25,7 +25,8 @@ DIR_SRC = Sources/
 
 DIR_LIB = Libft/
 
-NAME_SRC = 	main_minishell.c cd_minishell.c
+NAME_SRC = 	main_minishell.c cd_minishell.c split_cmd_minishell.c echo_minishell.c \
+			tools_minishell.c unsetenv_minishell.c setenv_minishell.c
 
 SRC =	$(addprefix $(DIR_SRC), $(NAME_SRC))
 

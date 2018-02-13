@@ -37,12 +37,10 @@ int			get_next_line(int const fd, char **line)
 {
 	static char	*str = NULL;
 	char		*save;
-	int			f;
 	int			ret;
 
-	f = 0;
 	if ((fd < 0 || line == NULL || read(fd, str, 0) < 0) ||
-	(!str && !(str = ft_strnew(f++))))
+	(!str && !(str = ft_strnew(0))))
 		return (-1);
 	while (!(save = ft_strchr(str, '\n')))
 	{
