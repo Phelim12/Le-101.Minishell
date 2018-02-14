@@ -54,6 +54,7 @@ int			get_next_line(int const fd, char **line)
 	}
 	*line = ft_strsub(str, 0, ft_strlen(str) - ft_strlen(save));
 	ft_strdel(&str);
-	str = ft_strdup(save + 1);
+	if ((save + 1)[0] != 0)
+		str = ft_strdup(save + 1);
 	return (1);
 }

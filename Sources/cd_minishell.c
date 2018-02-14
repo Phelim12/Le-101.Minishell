@@ -29,11 +29,11 @@ int		ft_cd_error(char **cmd)
 	return (0);
 }
 
-void	ft_cd_env(char **envp, char *path)
+void	ft_cd_env(char **envp)
 {
-	char buf[1024];
-	char *tmp;
-	int y;
+	char	buf[1024];
+	char	*tmp;
+	int		y;
 
 	y = -1;
 	getcwd(buf, 1024);
@@ -58,10 +58,10 @@ void	ft_cd_env(char **envp, char *path)
 
 void	ft_modif_cd(char **cmd, char **envp)
 {
-	char *home;
-	char *str;
-	int	y;
-	
+	char	*home;
+	char	*str;
+	int		y;
+
 	y = -1;
 	home = ft_find_line_env(envp, "HOME=/");
 	str = ft_strnew(ft_strlen(cmd[1]) + ft_strlen(home) + 2);
@@ -104,6 +104,6 @@ void	ft_cd_minishell(char **cmd, char **envp)
 			ft_putendl_fd(cmd[1], 2);
 		}
 		else
-			ft_cd_env(envp, cmd[1]);
+			ft_cd_env(envp);
 	}
 }

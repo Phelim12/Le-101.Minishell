@@ -17,7 +17,7 @@ CC = gcc
 
 NAME = minishell
 
-#C_FLAGS = -Wall -Wextra -Werror
+C_FLAGS = -Wall -Wextra -Werror -g
 
 DIR_INC = Includes/
 
@@ -25,8 +25,8 @@ DIR_SRC = Sources/
 
 DIR_LIB = Libft/
 
-NAME_SRC = 	main_minishell.c cd_minishell.c split_cmd_minishell.c echo_minishell.c \
-			tools_minishell.c unsetenv_minishell.c setenv_minishell.c
+NAME_SRC = 	cd_minishell.c echo_minishell.c env_minishell.c exe_minishell.c \
+	    	main_minishell.c split_cmd_minishell.c tools_minishell.c
 
 SRC =	$(addprefix $(DIR_SRC), $(NAME_SRC))
 
@@ -36,7 +36,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C $(DIR_LIB)
-	@$(CC) $(OBJ) -L $(DIR_LIB) -lft -o $(NAME) 
+	@$(CC) $(C_FLAGS) $(OBJ) -L $(DIR_LIB) -lft -o $(NAME) 
 	@echo "\033[0;32m✅️   make minishell.\033[0m"
 
 ./%.o: ./%.c

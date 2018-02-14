@@ -18,15 +18,18 @@ void	ft_free_tab(char ***tab)
 	int y;
 
 	y = -1;
+	if (!(*tab))
+		return ;
 	while ((*tab)[++y])
-		free((*tab)[y]);
-	free(*tab);
+		ft_strdel(&(*tab)[y]);
+	if ((*tab))
+		free(*tab);
 }
 
 int		ft_tablen(char **tab)
 {
 	int	y;
-	
+
 	y = 0;
 	while (tab[y])
 		y++;

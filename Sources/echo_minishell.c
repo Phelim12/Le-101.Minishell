@@ -39,7 +39,7 @@ void	ft_echo_env(char **envp, char *str)
 	char	*env;
 	int		a;
 	int		b;
-	
+
 	a = -1;
 	env = ft_strnew(ft_strlen(str) + 2);
 	while (str[++a])
@@ -55,27 +55,30 @@ void	ft_echo_env(char **envp, char *str)
 		}
 		ft_putchar(str[a]);
 	}
+	ft_strdel(&env);
 }
 
 void	ft_echo_minishell(char **cmd, char **envp)
 {
 	char	*option;
+	int		add;
 	int		y;
 
 	y = ft_option_echo(cmd, &option);
 	while (cmd[y])
-	{	
+	{
+		add = 0;
 		if (cmd[y][0] == '~')
 		{
 			ft_putstr(ft_find_line_env(envp, "HOME="));
-			cmd[y]++;
+			add = 1;
 		}
 		if (ft_strchr(cmd[y], '$'))
-			ft_echo_env(envp, cmd[y]);
+			ft_echo_env(envp, (cmd[y] + add));
 		else if (cmd[y + 1] == NULL)
-			ft_printf("%s", cmd[y]);
+			ft_printf("%s", (cmd[y] + add));
 		else
-			ft_printf("%s ", cmd[y]);
+			ft_printf("%s ", (cmd[y] + add));
 		y++;
 	}
 	if (!(ft_strchr(option, 'n')))
